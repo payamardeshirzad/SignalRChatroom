@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+    <script src="/scripts/jquery-1.9.1.min.js"></script>
+    <script src="/scripts/jquery.signalR-2.2.2.min.js"></script>
+    <script src="/signalr/hubs"></script>
+    <link href="/Content/bootstrap.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container">
+        <h2>Chat Room</h2>
+        <input type="hidden" id="displayName" />
+        <input type="text" id="labelid" ></input>
+        <textarea class="form-control" id="message" cols="60" rows="5"></textarea>
+        <p>
+        <input id="btnSend"type="button" class="btn btn-success" value="Send"/>
+            </p>
+        <ui id="chats"></ui>
+
+<script>
+    $(function () {
+        $("#displayName").val(prompt("Enter your Name:", "guest"));
+        $("#message").focus();
+
+        var chat = $.connection.chathub;
+        $.connection.hub.start().done(function () {
+            $("#btnSend").click(function () {
+                chat.server.send($("#displayName").val(), $("#message").val());
+                $("#message").val("").focus();
+            });
+        });
+        chat.client.addnewmessage = function (name,message,numofonlines) {
+            $("#chats").append("<ui><strong> " + name + "</strong>:  " + message + "</ui><br>");
+            $("#labelid").val(numofonlines);
+        }
+    });
+</script>
+    </div>
+
+</body>
+</html>
